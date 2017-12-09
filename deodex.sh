@@ -1,4 +1,4 @@
-POSITIONAL=()
+
 while [[ $# -gt 0 ]]
 do
 key="$1"
@@ -14,32 +14,32 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -l|--lib)
-    LIBPATH="$2"
+    -h|--help)
+    displayHelp
     shift # past argument
     shift # past value
     ;;
-    --default)
-    DEFAULT=YES
-    shift # past argument
-    ;;
-    *)    # unknown option
-    POSITIONAL+=("$1") # save it in an array for later
-    shift # past argument
-    ;;
+    
 esac
 done
-set -- "${POSITIONAL[@]}" # restore positional parameters
 
-echo FILE EXTENSION  = "${EXTENSION}"
-echo SEARCH PATH     = "${SEARCHPATH}"
-echo LIBRARY PATH    = "${LIBPATH}"
-echo DEFAULT         = "${DEFAULT}"
-echo "Number files in SEARCH PATH with EXTENSION:" $(ls -1 "${SEARCHPATH}"/*."${EXTENSION}" | wc -l)
-if [[ -n $1 ]]; then
-    echo "Last line of file specified as non-opt/last argument:"
-    tail -1 "$1"
-fi
+APK_NAMES=()
+apkIndex=0
+ODEX_NAMES=()
+odexIndex=0
+shopt -s globstar
+
+for file in ${ROOT_DIR}/**/*
+do 
+	if [ ${file: -4} == ".apk" ]
+	 APK_NAMES[apkIndex] = ${file: -4}
+	 let "apkIndex += 1"
+	 apktool d -o ${ROOT_DIR}/out/${file: -4}/ ${file}
+	fi
+	
+	if [ ${file: -5} == ".odex" ]
+	 ODEX_NAMES[odexIndex]
+
 
 function displayHelp {
  echo "Thank you for trying out RomReverse!\n"
