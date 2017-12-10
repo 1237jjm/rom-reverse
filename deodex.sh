@@ -23,23 +23,28 @@ case $key in
 esac
 done
 
-APK_NAMES=()
-apkIndex=0
-ODEX_NAMES=()
-odexIndex=0
+
 shopt -s globstar
 
 for file in ${ROOT_DIR}/**/*
 do 
 	if [ ${file: -4} == ".apk" ]
-	 APK_NAMES[apkIndex] = ${file: -4}
-	 let "apkIndex += 1"
-	 apktool d -o ${ROOT_DIR}/out/${file: -4}/ ${file}
+	 apktool d -o ${ROOT_DIR}/out/${file::-4}/apk/
 	fi
 	
 	if [ ${file: -5} == ".odex" ]
-	 ODEX_NAMES[odexIndex]
+	 baksmali x -b $BOOT_DIR -o ${ROOT_DIR}/out/${file::-4}/odex
+	fi
+done
 
+for file in ${ROOT_DIR}/out/**/*
+do 
+	if [ ${file: -6} == ".smali" ]
+	 smali ass -o $(dirname $file)/${file::-6}.dex $file
+	 dex2jar $(dirname $file)/${file::-6}.jar
+	 rm ${file::-6}.dex
+	 rm $file
+done
 
 function displayHelp {
  echo "Thank you for trying out RomReverse!\n"
